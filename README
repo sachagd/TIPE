@@ -5,5 +5,44 @@ l'idée c'est :
     la structure de l'AST est définie dans ast.ml
 
     - j'analyse mon AST, bon comme je l'ai dit, à l'origine je voulais le transformer en problème SAT/SMT car c'est de là que vient l'idée de mon TIPE 
-    mais j'avais du mal à comprendre comment le faire donc 
-    Donc
+    mais j'avais du mal à comprendre comment le faire
+    Donc, parce qu'il fallait quand même que je fasse quelque chose, j'ai eu l'idée de créer des hashtables qui a chaque variable associe un couple maximum minimum.
+    Plus précisément, parce que je voulais pouvoir appliquer mon algo sur des codes qui utilisent des array, à chaque variable, j'associe un couple n,t avec
+    n = len(t) - 1
+    t : int * int array, le tableau des couples maximum/minimum
+    l'idée c'est que pour tableaux, je dois créer un couple max/min pour chaque élément plus un dernier couple pour le tableau en entier
+    concrétement ce dernier couple c'est (minimum de tous les minimums, maximum de tous les maximums)
+    tu remarques ici que pour des simples int, le tableau à juste une longueur de 1
+
+    Le truc qui est a noter, c'est qu'il faut pas juste créer du code pour pouvoir analyser tout type de code en C, faut faire des choix par rapport à ce qu'on veut tester pour gagner du temps
+    En gros, mon code permet d'utiliser des tableaux mais c'est peut être même pas nécessaire (je pense que si)
+
+    Pour cette méthode mon algo il doit prendre en entrée mon AST et me donner en sortie une hashtable avec des estimation des maximums et minimum que les variables peuvent atteindre pendant l'exécution
+    A partir de ça c'est très simple, je fais : 
+    
+    Hashtbl.iter bound_to_type h
+    
+    let bound_to_type e (n ,t) =
+        let (k1, k2) = t.(n) in 
+        let s = ref "" in
+        if -128 <= k1 && k2 <= 127 then 
+            s := "int_8"
+        else 
+            if -32768 <= k1 && k2 <= 32767 then 
+            s := "int_16"
+            else
+            s := "int_32";
+        print_string e;
+        print_string " : ";
+        print_string !s;
+        print_newline ()
+
+    Ensuite, je modifie manuellement dans mon code d'origine les types de variables avec ces résultats
+    J'aurai pu l'automatiser, mais c'est en fait un peu compiqué (j'ai perdu pas mal de temps à essayer)
+    De toute manière, le temps que ça aurai pris est négligeable devant le reste
+
+
+Là ce que je voudrais faire, et en vrai je pense que ça c'est presque bon c'est terminer avec les hashtables puis trouver deux codes c sur lesquels j'ai des résultats intéressants.
+Genre un, créé spécifiquement pour que les résultats de mon algo montre qu'on peut gagner du temps en faisant de l'inférence de type
+Et un autre plus générique qui montre que dans le cadre général, ça ne marche pas vraiment (parce qu'en vrai il y a de forte chance que ce soit ça la conclusion de mon TIPE)
+Et si on a du temps, implémenter la méthode originale par résolution de pb SAT/SMT
