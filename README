@@ -1,0 +1,9 @@
+l'idée c'est : 
+    - je parse le code en utilisant ocamllex et menhir, ça en vrai, ça n'a pas tant d'importance que ça par rapport à l'objectif du TIPE mais c'est une étape nécessaire
+    ocamllex : lex le code, je définis mes regex et mes tokens et ça s'occupe de transformer ma chaine de caractère en liste de tokens
+    menhir : je parse le code, je définis ma grammaire, ici simplifié, l'objecif n'est pas de refaire tout C, et ça transforme ma liste de tokens en AST
+    la structure de l'AST est définie dans ast.ml
+
+    - j'analyse mon AST, bon comme je l'ai dit, à l'origine je voulais le transformer en problème SAT/SMT car c'est de là que vient l'idée de mon TIPE 
+    mais j'avais du mal à comprendre comment le faire donc 
+    Donc
