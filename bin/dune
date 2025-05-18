@@ -1,0 +1,5 @@
+(executable
+ (name main1)
+ (modules main1)
+ (flags (:standard -w -32-26-11))
+ (libraries ast lexer parser menhirLib))

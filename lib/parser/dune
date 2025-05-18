@@ -1,0 +1,6 @@
+(library
+	(name parser)
+	(modules parser)
+	(libraries ast))
+
+(menhir (modules parser))

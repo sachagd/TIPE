@@ -1,0 +1,6 @@
+(library
+	(name lexer)
+ 	(modules lexer)
+	(libraries parser))
+	
+(ocamllex lexer)
