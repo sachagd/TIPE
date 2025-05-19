@@ -65,10 +65,10 @@ assignment:
   | IDENT uniope { Assignment ($1, UniOpE($2))}
 
 declaration:
-  | type_spec IDENT { Declaration ($2, $1) }
+  | type_spec IDENT { Declaration $2 }
   | type_spec IDENT ASSIGN expression { InitDeclaration ($2, $4) }
-  | type_spec IDENT LBRACKET NUM RBRACKET ASSIGN LBRACE expressions RBRACE { ArrayDeclaration ($2, $8) }
-  | type_spec STAR IDENT { PointerDeclaration ($3, $1) }
+  | type_spec IDENT LBRACKET NUM RBRACKET { ArrayDeclaration $2 }
+  | type_spec IDENT LBRACKET NUM RBRACKET ASSIGN LBRACE expressions RBRACE { InitArrayDeclaration ($2, $8) }
 
 declarations: //arguments de fonctions
   | declaration COMMA declarations { $1 :: $3 }

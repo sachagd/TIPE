@@ -20,9 +20,9 @@ l'idée c'est :
                 and min2, max2 = bound_expr h expr2 in
                 (match op with
                 |Add -> (min1 + min2, max1 + max2)
-                |Sub -> (min1 - max2, max2 - min1)
+                |Sub -> (min1 - max2, max1 - min2)
                 |Mul -> (min1 * min2, max1 * max2)
-                |Div -> (min1 / max2, max2 / min1)
+                |Div -> (min1 / max2, max1 / min2)
         
         - Pour les boucles, j'ai décidé de manière assez arbitraire que les variables n'aient le droit qu'à des progressions arithmétiques
         On aurait peut être pu faire un autre choix mais celui-ci nous permet de faire une seule fois l'analyse dans la boucle puis de multiplier la différence par le nombre d'itération de la boucle

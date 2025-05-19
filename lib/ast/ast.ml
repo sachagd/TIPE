@@ -23,10 +23,10 @@ type cond =
   |BinOpC of binopC * expr * expr
 
 type stmt =
-  | Declaration of string * typ
+  | Declaration of string
   | InitDeclaration of string * expr
-  | ArrayDeclaration of string * expr list
-  | PointerDeclaration of string * typ
+  | ArrayDeclaration of string
+  | InitArrayDeclaration of string * expr list
   | Assignment of string * expr
   | ArrayAssign of string * expr
   | ForLoop of stmt * cond * stmt * stmt list

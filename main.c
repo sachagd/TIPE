@@ -1,11 +1,17 @@
 int main() {
-    int x = 3;
-    for (int i = 0; i < 10; i++) {
-        if (x > 5){
-            x = x + 3;
-        };
-        if (x > 0){
-            x = x - 4;
+    int tab[127];
+
+    for (int i = 0; i < 127; i++) {
+        tab[i] = 127 - i;
+    };
+
+    for (int pass = 0; pass < 127; pass++) {
+        for (int j = 0; j < 126; j++) {
+            if (tab[j] > tab[j + 1]) {
+                int tmp = tab[j];
+                tab[j] = tab[j + 1];
+                tab[j + 1] = tmp;
+            };
         };
     };
     return 0;

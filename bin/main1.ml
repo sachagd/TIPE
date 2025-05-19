@@ -15,7 +15,12 @@ let hash_loop h n var (loop_min, loop_max) =
   if Hashtbl.mem h var then 
     begin
     let (old_min, old_max) = Hashtbl.find h var in 
-    Hashtbl.replace h var (old_min + n * (loop_min - old_min), old_max + n * (loop_max - old_max));
+    if (old_min, old_max) <> (0,0) then
+      begin
+      Hashtbl.replace h var (old_min + n * (loop_min - old_min), old_max + n * (loop_max - old_max));
+      end
+    else
+      Hashtbl.replace h var (loop_min, loop_max);
     end
   else
     Hashtbl.add h var (loop_min, loop_max);
@@ -25,16 +30,6 @@ let get_var_name dec =
   match dec with
   |InitDeclaration(name, _) -> name
   |_ -> failwith "c'est suffisant" 
-
-let hash_if h var (if_min, if_max) = 
-  if Hashtbl.mem h var then
-    begin
-    let (old_min, old_max) = Hashtbl.find h var in
-    Hashtbl.replace h var (min old_min if_min, max old_max if_max)
-    end
-  else
-    Hashtbl.add h var (if_min, if_max);
-  ()
   
 let rec bound_expr h expr = 
   match expr with
@@ -45,9 +40,9 @@ let rec bound_expr h expr =
     and min2, max2 = bound_expr h expr2 in
     (match op with
     |Add -> (min1 + min2, max1 + max2)
-    |Sub -> (min1 - max2, max2 - min1)
+    |Sub -> (min1 - max2, max1 - min2)
     |Mul -> (min1 * min2, max1 * max2)
-    |Div -> (min1 / max2, max2 / min1)
+    |Div -> (min1 / max2, max1 / min2)
     |Mod -> failwith "error operator, utilise pas mod sale fou")
   |_ -> failwith "error expression, je sais même pas comment t'as fait"
 
@@ -62,9 +57,11 @@ let rec arraydeclaration l mi ma =
     
 let rec stmt h a = 
   match a with
+  |Declaration(var) |ArrayDeclaration(var) ->
+    Hashtbl.add h var (0, 0)
   |InitDeclaration(var, expr) -> 
     Hashtbl.add h var (bound_expr h expr);
-  |ArrayDeclaration(var, exprs) -> 
+  |InitArrayDeclaration(var, exprs) -> 
     Hashtbl.add h var (arraydeclaration exprs max_int min_int);
   |Assignment(nom, expr) |ArrayAssign(nom, expr) ->
     let old_min, old_max = Hashtbl.find h nom in
