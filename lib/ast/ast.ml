@@ -15,6 +15,7 @@ type expr =
   | BinOpE of binopE * expr * expr
   | UniOpE of uniopE
   | Malloc of expr
+  | Array of string 
 
 type binopC = Lt | Le | Gt | Ge | Eq | Ne
 
@@ -23,11 +24,11 @@ type cond =
 
 type stmt =
   | Declaration of string * typ
-  | InitDeclaration of string * typ * expr
-  | ArrayDeclaration of string * int * typ * expr list
+  | InitDeclaration of string * expr
+  | ArrayDeclaration of string * expr list
   | PointerDeclaration of string * typ
   | Assignment of string * expr
-  | ArrayAssign of string * expr * expr
+  | ArrayAssign of string * expr
   | ForLoop of stmt * cond * stmt * stmt list
   | If of stmt list 
   | Return of expr

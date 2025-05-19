@@ -44,7 +44,7 @@ expression:
   | expression binope expression { BinOpE ($2, $1, $3) }
   | LPAREN expression RPAREN { $2 }
   | MALLOC LPAREN expression RPAREN { Malloc $3 }
-  // | IDENT LBRACKET expression RBRACKET { Array ($1, $3) }
+  | IDENT LBRACKET expression RBRACKET { Array $1 }
 
 binopc: |LT {Lt} |LE {Le} |GT {Gt} |GE {Ge} |EQ {Eq} |NE {Ne}
 
@@ -60,14 +60,14 @@ loop:
 
 assignment:
   | IDENT ASSIGN expression { Assignment ($1, $3) }
-  | IDENT LBRACKET expression RBRACKET ASSIGN expression { ArrayAssign ($1, $3, $6) }
+  | IDENT LBRACKET expression RBRACKET ASSIGN expression { ArrayAssign ($1, $6) }
   | uniope IDENT { Assignment ($2, UniOpE($1))}
   | IDENT uniope { Assignment ($1, UniOpE($2))}
 
 declaration:
   | type_spec IDENT { Declaration ($2, $1) }
-  | type_spec IDENT ASSIGN expression { InitDeclaration ($2, $1, $4) }
-  | type_spec IDENT LBRACKET NUM RBRACKET ASSIGN LBRACE expressions RBRACE { ArrayDeclaration ($2, $4, $1, $8) }
+  | type_spec IDENT ASSIGN expression { InitDeclaration ($2, $4) }
+  | type_spec IDENT LBRACKET NUM RBRACKET ASSIGN LBRACE expressions RBRACE { ArrayDeclaration ($2, $8) }
   | type_spec STAR IDENT { PointerDeclaration ($3, $1) }
 
 declarations: //arguments de fonctions

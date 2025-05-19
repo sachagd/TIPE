@@ -7,39 +7,49 @@ l'idée c'est :
     - j'analyse mon AST, bon comme je l'ai dit, à l'origine je voulais le transformer en problème SAT/SMT car c'est de là que vient l'idée de mon TIPE 
     mais j'avais du mal à comprendre comment le faire
     Donc, parce qu'il fallait quand même que je fasse quelque chose, j'ai eu l'idée de créer des hashtables qui a chaque variable associe un couple maximum minimum.
-    Plus précisément, parce que je voulais pouvoir appliquer mon algo sur des codes qui utilisent des array, à chaque variable, j'associe un couple n,t avec
-    n = len(t) - 1
-    t : int * int array, le tableau des couples maximum/minimum
-    l'idée c'est que pour tableaux, je dois créer un couple max/min pour chaque élément plus un dernier couple pour le tableau en entier
-    concrétement ce dernier couple c'est (minimum de tous les minimums, maximum de tous les maximums)
-    tu remarques ici que pour des simples int, le tableau à juste une longueur de 1
 
-    Le truc qui est a noter, c'est qu'il faut pas juste créer du code pour pouvoir analyser tout type de code en C, faut faire des choix par rapport à ce qu'on veut tester pour gagner du temps
-    En gros, mon code permet d'utiliser des tableaux mais c'est peut être même pas nécessaire (je pense que si)
+    L'analyse se fait ainsi : 
+        - Pour des déclarations de variable, on crée un nouvel élément dans la hashtable en suivant ces règles : 
+            
+            let rec bound_expr h e = 
+            match e with
+            |Num(i) -> i,i 
+            |Var(var) |Array(var) -> Hashtbl.find h var
+            |BinOpE(op,e1,e2) ->
+                let min1, max1 = bound_expr h e1 
+                and min2, max2 = bound_expr h e2 in
+                (match op with
+                |Add -> (min1 + min2, max1 + max2)
+                |Sub -> (min1 - max2, max2 - min1)
+                |Mul -> (min1 * min2, max1 * max2)
+                |Div -> (min1 / max2, max2 / min1)
+        
+        - Pour les boucles, j'ai décidé de manière assez arbitraire que les variables n'aient le droit qu'à des progressions arithmétiques
+        On aurait peut être pu faire un autre choix mais celui-ci nous permet de faire une seule fois l'analyse dans la boucle puis de multiplier la différence par le nombre d'itération de la boucle
+        J'ai aussi supposé que les boucles étaient du type "for (int i = 0; i < CONST; i++)" de telle sorte que le nombre d'itération de la boucle soit calculable simplement, c'est juste CONST
 
-    Pour cette méthode mon algo il doit prendre en entrée mon AST et me donner en sortie une hashtable avec des estimation des maximums et minimum que les variables peuvent atteindre pendant l'exécution
+        - Pour les if, pour simplifier les choses, je ne cherche pas à savoir si la condition est réalisé donc je suppose toujours que oui, il suffit donc de faire l'analyse dans le if 
+
+    Ainsi mon algo il prend en entrée mon AST et donne en sortie une hashtable avec des estimation des maximums et minimum que les variables peuvent atteindre pendant l'exécution
     A partir de ça c'est très simple, je fais : 
     
-    Hashtbl.iter bound_to_type h
-    
-    let bound_to_type e (n ,t) =
-        let (k1, k2) = t.(n) in 
-        let s = ref "" in
-        if -128 <= k1 && k2 <= 127 then 
-            s := "int_8"
-        else 
-            if -32768 <= k1 && k2 <= 32767 then 
-            s := "int_16"
-            else
-            s := "int_32";
-        print_string e;
+        Hashtbl.iter bound_to_type h
+        
+        let bound_to_type var (var_min, var_max) =
+        print_string var;
         print_string " : ";
-        print_string !s;
+        if -128 <= var_min && var_max <= 127 then 
+            print_string "int_8"
+        else 
+            if -32768 <= var_min && var_max <= 32767 then 
+            print_string "int_16"
+            else
+            print_string "int_32";
         print_newline ()
 
     Ensuite, je modifie manuellement dans mon code d'origine les types de variables avec ces résultats
-    J'aurai pu l'automatiser, mais c'est en fait un peu compiqué (j'ai perdu pas mal de temps à essayer)
-    De toute manière, le temps que ça aurai pris est négligeable devant le reste
+    J'aurai pu l'automatiser, mais c'est en fait un peu compiqué (j'ai perdu pas mal de temps à essayer de le coder sans succès)
+    De toute manière, le temps d'exécution pour modifier automatiquement les types aurait surement est négligeable devant le reste
 
 
 Là ce que je voudrais faire, et en vrai je pense que ça c'est presque bon c'est terminer avec les hashtables puis trouver deux codes c sur lesquels j'ai des résultats intéressants.
