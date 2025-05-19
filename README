@@ -11,13 +11,13 @@ l'idée c'est :
     L'analyse se fait ainsi : 
         - Pour des déclarations de variable, on crée un nouvel élément dans la hashtable en suivant ces règles : 
             
-            let rec bound_expr h e = 
-            match e with
+            let rec bound_expr h expr = 
+            match expr with
             |Num(i) -> i,i 
             |Var(var) |Array(var) -> Hashtbl.find h var
-            |BinOpE(op,e1,e2) ->
-                let min1, max1 = bound_expr h e1 
-                and min2, max2 = bound_expr h e2 in
+            |BinOpE(op, expr1, expr2) ->
+                let min1, max1 = bound_expr h expr1 
+                and min2, max2 = bound_expr h expr2 in
                 (match op with
                 |Add -> (min1 + min2, max1 + max2)
                 |Sub -> (min1 - max2, max2 - min1)
