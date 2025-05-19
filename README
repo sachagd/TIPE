@@ -50,9 +50,3 @@ l'idée c'est :
     Ensuite, je modifie manuellement dans mon code d'origine les types de variables avec ces résultats
     J'aurai pu l'automatiser, mais c'est en fait un peu compiqué (j'ai perdu pas mal de temps à essayer de le coder sans succès)
     De toute manière, le temps d'exécution pour modifier automatiquement les types aurait surement est négligeable devant le reste
-
-
-Là ce que je voudrais faire, et en vrai je pense que ça c'est presque bon c'est terminer avec les hashtables puis trouver deux codes c sur lesquels j'ai des résultats intéressants.
-Genre un, créé spécifiquement pour que les résultats de mon algo montre qu'on peut gagner du temps en faisant de l'inférence de type
-Et un autre plus générique qui montre que dans le cadre général, ça ne marche pas vraiment (parce qu'en vrai il y a de forte chance que ce soit ça la conclusion de mon TIPE)
-Et si on a du temps, implémenter la méthode originale par résolution de pb SAT/SMT

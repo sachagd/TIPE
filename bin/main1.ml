@@ -106,16 +106,17 @@ let bound_to_type var (var_min, var_max) =
       print_string "int_32";
   print_newline ()
 
-let find_bound a = 
-  let h = Hashtbl.create 0 in 
-  program h a;
-  Hashtbl.iter print_hashtable h;
-  print_newline();
-  Hashtbl.iter bound_to_type h
-
 let () =
+  let t0 = Sys.time() in 
   let filename = "main.c" in
   let channel = open_in filename in
   let lexbuf = Lexing.from_channel channel in
   let ast = Parser.program Lexer.tokenize lexbuf in
-  find_bound ast
+  let h = Hashtbl.create 0 in 
+  program h ast;
+  let t1 = Sys.time() in 
+  print_float (t1 -. t0);
+  print_newline ();
+  Hashtbl.iter print_hashtable h;
+  print_newline();
+  Hashtbl.iter bound_to_type h

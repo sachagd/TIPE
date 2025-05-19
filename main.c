@@ -1,4 +1,4 @@
-int main() {
+int code(){
     int tab[127];
 
     for (int i = 0; i < 127; i++) {
@@ -14,5 +14,9 @@ int main() {
             };
         };
     };
+    return 0;
+}
+
+int main() {
     return 0;
 }

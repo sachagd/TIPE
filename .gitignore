@@ -1,3 +1,6 @@
 /_build
 
 m.c
+main_naif.c
+main_hash.c
+main_sat.c
